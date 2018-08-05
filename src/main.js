@@ -17,6 +17,13 @@ Vue.use(ElementUI)
 axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 // 挂载axios
 Vue.prototype.$http = axios
+// 全局为axios挂载token请求头，需要使用request拦截器实现
+axios.interceptors.request.use(config => {
+  // element ui Loading方法
+  config.headers.Authorization = window.sessionStorage.getItem('token')
+  console.log(config)
+  return config
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
