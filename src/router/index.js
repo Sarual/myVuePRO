@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Welcome from '@/components/Welcome'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
+// 导入用户管理组件
+import Users from '@/components/User/Users'
 Vue.use(Router)
 
 const router = new Router({
@@ -23,6 +25,11 @@ const router = new Router({
         {
           path: '/welcome',
           component: Welcome
+        },
+        // 经过分析，用户管理列表也应该作为我们的后台首页，和welcome平级
+        {
+          path: '/users',
+          component: Users
         }
       ]
     }
@@ -30,7 +37,6 @@ const router = new Router({
 })
 // 全局路由守卫
 router.beforeEach((to, from, next) => {
-  console.log('navigation-guards')
   // to: Route: 即将要进入的目标 路由对象
   // from: Route: 当前导航正要离开的路由
   // next: Function: 一定要调用该方法来 resolve 这个钩子。执行效果依赖 next 方法的调用参数。
@@ -39,7 +45,6 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login') return next()
   // 获取token字符串（如果有token就放行）
   const tokenStr = sessionStorage.getItem('token')
-  console.log(tokenStr)
   if (tokenStr) return next()
   // 如果没有tokenStr,就跳转到登录页
   return next('/login')

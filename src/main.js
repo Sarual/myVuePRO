@@ -21,7 +21,6 @@ Vue.prototype.$http = axios
 axios.interceptors.request.use(config => {
   // element ui Loading方法
   config.headers.Authorization = window.sessionStorage.getItem('token')
-  console.log(config)
   return config
 })
 /* eslint-disable no-new */

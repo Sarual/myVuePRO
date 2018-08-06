@@ -40,9 +40,9 @@
                     </el-submenu>
                 </el-menu>
             </el-aside>
-            <!-- 右侧的主体区域 -->
+            <!-- 右侧的主体区域(这个就是内容坑) -->
             <el-main class="el-main">
-                内容区域
+                <router-view></router-view>
             </el-main>
         </el-container>
     </el-container>
