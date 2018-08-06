@@ -17,7 +17,7 @@
                 </el-input>
             </el-col>
             <el-col :span="4">
-                <el-button type="primary">添加用户</el-button>
+                <el-button type="primary" @click="addDialogVisible = true">添加用户</el-button>
             </el-col>
         </el-row>
         <!-- 表格区域(动态渲染表格数据) -->
@@ -50,8 +50,17 @@
             <el-table-column
             label="状态">
             <!-- 让状态动态绑定到这一行数据中的mg_state上 -->
+            <!-- switchChange(scope.row.id)但是这样写方法只能拿到id，不能同时拿状态，要改写 -->
+            <!-- this.switchChange()不能加this 此时this指向的不是当前数据对象，而是el-switch元素对象 -->
+                <!-- 第1种方式 -->
+                <!-- <el-switch
+                @change="(newState)=>{switchChange(newState,scope.row.id)}"
+                slot-scope="scope">
+                </el-switch> -->
+                <!-- 第2种方式 -->
                 <el-switch
                 v-model="scope.row.mg_state"
+                @change="switchChange2(scope.row.mg_state,scope.row.id)"
                 slot-scope="scope">
                 </el-switch>
             </el-table-column>
@@ -84,51 +93,34 @@
             :total="total">
         </el-pagination>
     </el-card>
+    <!-- 添加一个用户的对话框 -->
+    <el-dialog
+        title="添加用户"
+        :visible.sync="addDialogVisible"
+        width="50%">
+        <!-- 这里是添加用户的表单 -->
+        <el-form ref="addFormRef" :rules="addFormRules" :model="addForm" label-width="80px">
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="addForm.username"></el-input>
+            </el-form-item>
+        </el-form>
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
-
 <script>
+// 使用mixins拆分组件结构和行为
+// 导入当前使用的mixins
+import mixins from './Users-mixins.js'
 export default {
-  data() {
-    return {
-      // 查询用户列表时候，要携带的查询参数
-      queryInfo: {
-        query: '', // 用户输入的搜索条件(查询参数)
-        pagenum: 1, // 当前请求的是第几页数据
-        pagesize: 2 // 每页显示多少条数据
-      },
-      total: 0, // 总页数
-      // 用户列表
-      usersList: []
-    }
-  },
-  created() {
-    this.getUsersList()
-  },
-  methods: {
-    // 获取用户列表列表
-    async getUsersList() {
-      const { data: res } = await this.$http.get('users', { params: this.queryInfo })
-      if (res.meta.status !== 200) return this.$message.error('请求数据失败')
-      this.usersList = res.data.users
-      this.total = res.data.total
-      console.log(res.data)
-    },
-    // 监听 pagesize 的变化
-    handleSizeChange(getNewSize) {
-      // 把最新的 pagesize 赋值给 this.queryInfo
-      this.queryInfo.pagesize = getNewSize
-      this.getUsersList()
-    },
-    // 监听 页码值 的变化
-    handleCurrentChange(getNewPageNum) {
-      this.queryInfo.pagenum = getNewPageNum
-      this.getUsersList()
-    }
-  }
+  // 表示混合，把外界定义的相关的代码，混入到当前这个组件中
+  mixins: [mixins]
 }
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h1,
@@ -138,7 +130,7 @@ h2 {
 .el-userList-top {
   margin-bottom: 20px;
 }
-.el-pagination{
-    margin-top: 15px;
+.el-pagination {
+  margin-top: 15px;
 }
 </style>

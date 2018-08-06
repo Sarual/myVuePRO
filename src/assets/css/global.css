@@ -19,3 +19,8 @@ body,
 el-column{
   height: 16px;
 }
+/* 箭头有点错位，两个类样式都能选中和控制这个小图标*/
+.el-input__icon{
+  /* line-heigh是一个系数，最终的行高值，是字体大小*这个系数 得到的结果 */
+  line-height: 1;
+}
