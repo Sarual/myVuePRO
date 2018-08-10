@@ -70,10 +70,10 @@
             <!-- templete只是一个包裹的内容，不占具体位置 -->
             <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
-                    <el-button type="primary" class="el-icon-edit" size="mini"></el-button>
+                    <el-button type="primary" class="el-icon-edit" @click="showEditDialog(scope)" size="mini"></el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                    <el-button type="danger" class="el-icon-delete" size="mini"></el-button>
+                    <el-button type="danger" class="el-icon-delete"  @click="remove(scope)" size="mini"></el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="分配角色" placement="top-start">
                     <el-button type="warning" class="el-icon-setting" size="mini" :enterable="false"></el-button>
@@ -96,18 +96,53 @@
     <!-- 添加一个用户的对话框 -->
     <el-dialog
         title="添加用户"
+        @closed="addDialogClosed"
         :visible.sync="addDialogVisible"
         width="50%">
         <!-- 这里是添加用户的表单 -->
-        <el-form ref="addFormRef" :rules="addFormRules" :model="addForm" label-width="80px">
+        <el-form ref="addFormRef" :rules="addFormRules" :model="addForm" label-width="70px">
             <el-form-item label="用户名" prop="username">
                 <el-input v-model="addForm.username"></el-input>
+            </el-form-item>
+             <el-form-item label="密码" prop="password">
+                <el-input v-model="addForm.password"></el-input>
+            </el-form-item>
+             <el-form-item label="邮箱" prop="email">
+                <el-input v-model="addForm.email"></el-input>
+            </el-form-item>
+             <el-form-item label="手机" prop="mobile">
+                <el-input v-model="addForm.mobile"></el-input>
             </el-form-item>
         </el-form>
         <span>这是一段信息</span>
         <span slot="footer" class="dialog-footer">
             <el-button @click="addDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+            <el-button type="primary" @click="addUser">确 定</el-button>
+        </span>
+    </el-dialog>
+    <!-- 编辑用户的对话框（我们让弹出的此对话框和天机用户对话共用一个） -->
+     <el-dialog
+        title="修改用户信息"
+        :visible.sync="editDialogVisible"
+        @closed="editDialogClosed"
+        width="50%">
+        <!-- 这里是添加用户的表单 -->
+        <!-- 分析下：用户名不需要修改，在这里我们修改邮箱和手机号 -->
+        <el-form ref="editFormRef" :rules="editFormRules" :model="editForm" label-width="70px">
+            <el-form-item label="用户名"  disabled prop="username">
+                <el-input v-model="editForm.username"></el-input>
+            </el-form-item>
+             <el-form-item label="邮箱" prop="email">
+                <el-input v-model="editForm.email"></el-input>
+            </el-form-item>
+             <el-form-item label="手机" prop="mobile">
+                <el-input v-model="editForm.mobile"></el-input>
+            </el-form-item>
+        </el-form>
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="editDialogVisible=false">取 消</el-button>
+            <el-button type="primary" @click="editUser">确 定</el-button>
         </span>
     </el-dialog>
   </div>
